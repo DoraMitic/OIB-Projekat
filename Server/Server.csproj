@@ -51,9 +51,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Projekat\Projekat.csproj">
+    <ProjectReference Include="..\Projekat\Common.csproj">
       <Project>{B847F904-51FD-4B0A-89BC-F35578576A92}</Project>
-      <Name>Projekat</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
