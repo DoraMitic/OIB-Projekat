@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ServiceModel;
+using Contracts;
 using System.ServiceModel.Security;
+using Manager;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
-using Manager;
-using Projekat;
 
-namespace Server
+namespace ServiceApp
 {
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
+	public class Program
+	{
+		static void Main(string[] args)
+		{
 			/// srvCertCN.SubjectName should be set to the service's username. .NET WindowsIdentity class provides information about Windows user running the given process
 			string srvCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
 
@@ -51,5 +51,5 @@ namespace Server
 				host.Close();
 			}
 		}
-    }
+	}
 }
