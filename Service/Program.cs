@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ServiceModel;
-using Contracts;
+using Common;
 using System.ServiceModel.Security;
 using Manager;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 
-namespace ServiceApp
+namespace Service
 {
 	public class Program
 	{

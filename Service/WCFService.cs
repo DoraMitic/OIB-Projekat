@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Contracts;
+using Common;
 using Manager;
 using System.Security.Cryptography.X509Certificates;
 
-namespace ServiceApp
+namespace Service
 {
 	public class WCFService : IWCFContract
 	{

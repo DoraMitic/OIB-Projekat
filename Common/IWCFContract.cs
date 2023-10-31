@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ServiceModel;
 
-namespace Contracts
+namespace Common
 {
 	[ServiceContract]
 	public interface IWCFContract

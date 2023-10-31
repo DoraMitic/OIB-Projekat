@@ -54,6 +54,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{a1b79d09-4e20-454e-9698-b433031bbb66}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Manager\Manager.csproj">
       <Project>{e98d9ad1-9d4b-454b-8c15-ac49a9b01720}</Project>
       <Name>Manager</Name>

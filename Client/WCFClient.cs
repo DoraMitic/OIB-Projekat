@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ServiceModel;
-using Projekat;
 using Manager;
 using System.Security.Principal;
 using System.Security.Cryptography.X509Certificates;
+using Common;
 
 namespace Client
 {
