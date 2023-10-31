@@ -1,39 +1,34 @@
-﻿using Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel;
 using System.Text;
-using System.Threading.Tasks;
+using System.ServiceModel;
+using System.Security.Cryptography.X509Certificates;
+using Manager;
 
 namespace Client
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            try
+            /// Define the expected service certificate. It is required to establish cmmunication using certificates.
+            string srvCertCN = "wcfservice";
+
+            NetTcpBinding binding = new NetTcpBinding();
+            binding.Security.Transport.ClientCredentialType = TcpClientCredentialType.Certificate;
+
+            /// Use CertManager class to obtain the certificate based on the "srvCertCN" representing the expected service identity.
+            X509Certificate2 srvCert = CertManager.GetCertificateFromStorage(StoreName.TrustedPeople, StoreLocation.LocalMachine, srvCertCN);
+            EndpointAddress address = new EndpointAddress(new Uri("net.tcp://localhost:9999/Receiver"),
+                                      new X509CertificateEndpointIdentity(srvCert));
+
+            using (WCFClient proxy = new WCFClient(binding, address))
             {
-                string address = "net.tcp://localhost:4000/IService1";
-                NetTcpBinding binding = new NetTcpBinding();
-
-                ChannelFactory<IService1> channel = new ChannelFactory<IService1>(binding, address);
-
-                IService1 proxy = channel.CreateChannel();
-
-                Console.WriteLine("Klijent uspesno pokrenut.");
-
-                Console.WriteLine("Unesite tekst:");
-
-                string unos = Console.ReadLine();
-                Console.WriteLine(proxy.GetData(unos));
-
-                Console.ReadKey();
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                /// 1. Communication test
+                proxy.TestCommunication();
+                Console.WriteLine("TestCommunication() finished. Press <enter> to continue ...");
+                Console.ReadLine();
             }
         }
     }
