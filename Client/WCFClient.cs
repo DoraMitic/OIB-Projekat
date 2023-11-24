@@ -1,55 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceModel;
+﻿using Common;
 using Manager;
-using System.Security.Principal;
+using System;
 using System.Security.Cryptography.X509Certificates;
-using Common;
+using System.Security.Principal;
+using System.ServiceModel;
 
 namespace Client
 {
     public class WCFClient : ChannelFactory<IWCFContract>, IWCFContract, IDisposable
-	{
-		IWCFContract factory;
+    {
+        IWCFContract factory;
 
-		public WCFClient(NetTcpBinding binding, EndpointAddress address)
-			: base(binding, address)
-		{
-			/// cltCertCN.SubjectName should be set to the client's username. .NET WindowsIdentity class provides information about Windows user running the given process
-			string cltCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
+        public WCFClient(NetTcpBinding binding, EndpointAddress address)
+            : base(binding, address)
+        {
+            /// cltCertCN.SubjectName should be set to the client's username. .NET WindowsIdentity class provides information about Windows user running the given process
+            string cltCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
 
-			this.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.Custom;
-			this.Credentials.ServiceCertificate.Authentication.CustomCertificateValidator = new ClientCertValidator();
-			this.Credentials.ServiceCertificate.Authentication.RevocationMode = X509RevocationMode.NoCheck;
+            this.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.Custom;
+            this.Credentials.ServiceCertificate.Authentication.CustomCertificateValidator = new ClientCertValidator();
+            this.Credentials.ServiceCertificate.Authentication.RevocationMode = X509RevocationMode.NoCheck;
 
-			/// Set appropriate client's certificate on the channel. Use CertManager class to obtain the certificate based on the "cltCertCN"
-			this.Credentials.ClientCertificate.Certificate = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, cltCertCN);
+            /// Set appropriate client's certificate on the channel. Use CertManager class to obtain the certificate based on the "cltCertCN"
+            this.Credentials.ClientCertificate.Certificate = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, cltCertCN);
 
-			factory = this.CreateChannel();
-		}
+            factory = this.CreateChannel();
+        }
 
-		public void TestCommunication()
-		{
-			try
-			{
-				factory.TestCommunication();
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("[TestCommunication] ERROR = {0}", e.Message);
-			}
-		}
+        public void TestCommunication()
+        {
+            try
+            {
+                factory.TestCommunication();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("[TestCommunication] ERROR = {0}", e.Message);
+            }
+        }
 
-		public void Dispose()
-		{
-			if (factory != null)
-			{
-				factory = null;
-			}
+        public void Dispose()
+        {
+            if (factory != null)
+            {
+                factory = null;
+            }
 
-			this.Close();
-		}
-	}
+            this.Close();
+        }
+
+        public bool OtvoriRacun()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ZatvoriRacun(long broj)
+        {
+            bool retValue = false;
+            try
+            {
+                retValue = factory.ZatvoriRacun(broj);
+                Console.WriteLine("Delete allowed");
+            }
+            catch (FaultException<SecurityException> e)
+            {
+                Console.WriteLine("Error while trying to Delete : {0}", e.Detail.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error while trying to Delete : {0}", e.Message);
+            }
+            return retValue;
+        }
+
+        public double ProveriStanje(long broj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Uplata(long broj, double iznos)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Isplata(long broj, double iznos)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Opomena(long broj)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

@@ -29,6 +29,10 @@ namespace Client
                 proxy.TestCommunication();
                 Console.WriteLine("TestCommunication() finished. Press <enter> to continue ...");
                 Console.ReadLine();
+
+                Console.WriteLine("Unesite broj rracuna:");
+                long broj = long.Parse(Console.ReadLine());
+                proxy.ZatvoriRacun(broj);
             }
         }
     }
