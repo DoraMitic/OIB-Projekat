@@ -30,9 +30,38 @@ namespace Client
                 Console.WriteLine("TestCommunication() finished. Press <enter> to continue ...");
                 Console.ReadLine();
 
-                Console.WriteLine("Unesite broj rracuna:");
+                Console.WriteLine("Otvaranje racuna...");
+                proxy.OtvoriRacun();
+
+                Console.WriteLine("Zatvaranje racuna...");
+                Console.WriteLine("Unesite broj racuna:");
                 long broj = long.Parse(Console.ReadLine());
                 proxy.ZatvoriRacun(broj);
+
+                Console.WriteLine("Provera stanja racuna...");
+                Console.WriteLine("Unesite broj racuna:");
+                broj = long.Parse(Console.ReadLine());
+                proxy.ProveriStanje(broj);
+
+                Console.WriteLine("Uplata na racun...");
+                Console.WriteLine("Unesite broj racuna:");
+                broj = long.Parse(Console.ReadLine());
+                Console.WriteLine("Unesite iznos uplate:");
+                double uplata = double.Parse(Console.ReadLine());
+                proxy.Uplata(broj, uplata);
+
+                Console.WriteLine("Isplata sa racuna...");
+                Console.WriteLine("Unesite broj racuna:");
+                broj = long.Parse(Console.ReadLine());
+                Console.WriteLine("Unesite iznos isplate:");
+                double isplata = double.Parse(Console.ReadLine());
+                proxy.Isplata(broj, isplata);
+
+                Console.WriteLine("Provera opomene...");
+                Console.WriteLine("Unesite broj racuna:");
+                broj = long.Parse(Console.ReadLine());
+                proxy.Opomena(broj);
+
             }
         }
     }

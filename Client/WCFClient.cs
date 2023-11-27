@@ -51,7 +51,21 @@ namespace Client
 
         public bool OtvoriRacun()
         {
-            throw new NotImplementedException();
+            bool retValue = false;
+            try
+            {
+                retValue = factory.OtvoriRacun();
+                //Console.WriteLine("Delete allowed");
+            }
+            catch (FaultException<SecurityException> e)
+            {
+                Console.WriteLine("Greska kod funkcije OtvoriRacun() : {0}", e.Detail.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Greska kod funkcije OtvoriRacun() : {0}", e.Message);
+            }
+            return retValue;
         }
 
         public bool ZatvoriRacun(long broj)
@@ -75,22 +89,78 @@ namespace Client
 
         public double ProveriStanje(long broj)
         {
-            throw new NotImplementedException();
+            double retValue = 0;
+            try
+            {
+                retValue = factory.ProveriStanje(broj);
+                //Console.WriteLine("Delete allowed");
+            }
+            catch (FaultException<SecurityException> e)
+            {
+                Console.WriteLine("Greska kod funkcije ProveriStanje() : {0}", e.Detail.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Greska kod funkcije ProveriStanje() : {0}", e.Message);
+            }
+            return retValue;
         }
 
         public bool Uplata(long broj, double iznos)
         {
-            throw new NotImplementedException();
+            bool retValue = false;
+            try
+            {
+                retValue = factory.Uplata(broj, iznos);
+                //Console.WriteLine("Delete allowed");
+            }
+            catch (FaultException<SecurityException> e)
+            {
+                Console.WriteLine("Greska kod funkcije Uplata() : {0}", e.Detail.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Greska kod funkcije Uplata() : {0}", e.Message);
+            }
+            return retValue;
         }
 
         public bool Isplata(long broj, double iznos)
         {
-            throw new NotImplementedException();
+            bool retValue = false;
+            try
+            {
+                retValue = factory.Isplata(broj, iznos);
+                //Console.WriteLine("Delete allowed");
+            }
+            catch (FaultException<SecurityException> e)
+            {
+                Console.WriteLine("Greska kod funkcije Isplata() : {0}", e.Detail.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Greska kod funkcije Isplata() : {0}", e.Message);
+            }
+            return retValue;
         }
 
         public bool Opomena(long broj)
         {
-            throw new NotImplementedException();
+            bool retValue = false;
+            try
+            {
+                retValue = factory.Opomena(broj);
+                //Console.WriteLine("Delete allowed");
+            }
+            catch (FaultException<SecurityException> e)
+            {
+                Console.WriteLine("Greska kod funkcije Opomena() : {0}", e.Detail.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Greska kod funkcije Opomena() : {0}", e.Message);
+            }
+            return retValue;
         }
     }
 }
