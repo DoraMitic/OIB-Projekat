@@ -20,6 +20,7 @@ namespace Client
 
             /// Use CertManager class to obtain the certificate based on the "srvCertCN" representing the expected service identity.
             X509Certificate2 srvCert = CertManager.GetCertificateFromStorage(StoreName.TrustedPeople, StoreLocation.LocalMachine, srvCertCN);
+            //Manager.ClientCertValidator.(srvCert);
             EndpointAddress address = new EndpointAddress(new Uri("net.tcp://localhost:9999/Receiver"),
                                       new X509CertificateEndpointIdentity(srvCert));
 

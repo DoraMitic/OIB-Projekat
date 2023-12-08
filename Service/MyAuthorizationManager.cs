@@ -9,11 +9,9 @@ namespace Service
 {
     class MyAuthorizationManager : ServiceAuthorizationManager
     {
-        protected override bool CheckAccessCore(OperationContext operationContext)
-        {
-            WindowsIdentity identity = operationContext.ServiceSecurityContext.WindowsIdentity;
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            return principal.IsInRole("Reader");
-        }
+        //protected override bool CheckAccessCore(OperationContext operationContext)
+        //{
+
+        //}
     }
 }

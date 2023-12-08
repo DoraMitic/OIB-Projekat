@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Permissions;
+using System.Security.Principal;
 using System.ServiceModel;
-using System.Text;
 using System.Threading;
-using Common;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Service
 {
-    public class WCFService : IWCFContract
+    public class WCFService : IWCFContract//, IPrincipal
     {
+        public List<string> Roles = new List<string> { "korisnik", "sluzbenik" };
+        public IIdentity Identity { get; set; }
+
         public void TestCommunication()
         {
             Console.WriteLine("Communication established.");
@@ -19,20 +20,19 @@ namespace Service
 
         public bool OtvoriRacun()
         {
-            if (Thread.CurrentPrincipal.IsInRole("Sluzbenik"))
+            if (Thread.CurrentPrincipal.IsInRole("sluzbenik"))
             {
                 //foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 //{
                 //    if (racun.Value.Broj == 0)
                 //    {
-                        string name = Thread.CurrentPrincipal.Identity.Name;
-                        long randomFiveDigitNumber = Database.racuni.Last().Value.Broj + 1;
+                string name = Thread.CurrentPrincipal.Identity.Name;
+                long randomFiveDigitNumber = Database.racuni.Last().Value.Broj + 1;
 
-                        Racun noviRacun = new Racun(randomFiveDigitNumber, 0, -500, 0, DateTime.Now);
+                Racun noviRacun = new Racun(randomFiveDigitNumber, 0, -500, 0, DateTime.Now);
 
-                        //Database.racuni[racun.Key] = noviRacun;
-                        Database.racuni.Add(name, noviRacun);
-                    //}
+                Database.racuni.Add(name, noviRacun);
+                //}
                 //}
             }
             else
@@ -49,10 +49,10 @@ namespace Service
 
         public bool ZatvoriRacun(long broj)
         {
-            if (Thread.CurrentPrincipal.IsInRole("Sluzbenik"))
-                foreach(KeyValuePair<string, Racun> racun in Database.racuni)
+            if (Thread.CurrentPrincipal.IsInRole("sluzbenik"))
+                foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
-                    if(racun.Value.Broj == broj)
+                    if (racun.Value.Broj == broj)
                     {
                         return Database.racuni.Remove(racun.Key);
                     }
@@ -65,13 +65,13 @@ namespace Service
                     "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
-                
+
             return false;
         }
 
         public double ProveriStanje(long broj)
         {
-            if (Thread.CurrentPrincipal.IsInRole("Sluzbenik") || Thread.CurrentPrincipal.IsInRole("Korisnik"))
+            if (Thread.CurrentPrincipal.IsInRole("sluzbenik") || Thread.CurrentPrincipal.IsInRole("korisnik"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -95,7 +95,7 @@ namespace Service
 
         public bool Uplata(long broj, double iznosUplate)
         {
-            if (Thread.CurrentPrincipal.IsInRole("Sluzbenik") || Thread.CurrentPrincipal.IsInRole("Korisnik"))
+            if (Thread.CurrentPrincipal.IsInRole("sluzbenik") || Thread.CurrentPrincipal.IsInRole("korisnik"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -132,7 +132,7 @@ namespace Service
 
         public bool Isplata(long broj, double iznosIsplate)
         {
-            if (Thread.CurrentPrincipal.IsInRole("Sluzbenik") || Thread.CurrentPrincipal.IsInRole("Korisnik"))
+            if (Thread.CurrentPrincipal.IsInRole("sluzbenik") || Thread.CurrentPrincipal.IsInRole("korisnik"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -174,7 +174,7 @@ namespace Service
 
         public bool Opomena(long broj)
         {
-            if (Thread.CurrentPrincipal.IsInRole("Sluzbenik"))
+            if (Thread.CurrentPrincipal.IsInRole("sluzbenik"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -205,6 +205,17 @@ namespace Service
             }
             return false;
         }
+
+        //public bool IsInRole(string role)
+        //{
+        //    if (Roles.Contains(role.ToLower()))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
+
+        //public override bool IsInRole(string? role);
     }
 }
 
