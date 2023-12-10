@@ -8,6 +8,7 @@ using System.ServiceModel.Security;
 using Manager;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
+using System.ServiceModel.Description;
 
 namespace Service
 {
@@ -38,6 +39,12 @@ namespace Service
 			// dpodesavamo da se koristi MyAuthorizationManager umesto ugradjenog
 			//host.Authorization.ServiceAuthorizationManager = new MyAuthorizationManager(host.Credentials.ClientCertificate.Certificate);
 
+			ServiceSecurityAuditBehavior newAudit = new ServiceSecurityAuditBehavior();
+			newAudit.AuditLogLocation = AuditLogLocation.Application;
+			newAudit.ServiceAuthorizationAuditLevel = AuditLevel.SuccessOrFailure;
+
+			host.Description.Behaviors.Remove<ServiceSecurityAuditBehavior>();
+			host.Description.Behaviors.Add(newAudit);
 
 			try
 			{

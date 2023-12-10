@@ -26,7 +26,7 @@ namespace Client
                 /// Set appropriate client's certificate on the channel. Use CertManager class to obtain the certificate based on the "cltCertCN"
                 this.Credentials.ClientCertificate.Certificate = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, cltCertCN);
 
-                this.a = new MyAuthorizationManager(this.Credentials.ClientCertificate.Certificate);
+                MyAuthorizationManager myAuthorizationManager = new MyAuthorizationManager(this.Credentials.ClientCertificate.Certificate);
 
                 factory = this.CreateChannel();
             }
