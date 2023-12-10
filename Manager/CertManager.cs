@@ -30,9 +30,8 @@ namespace Manager
                 /// Check whether the subjectName of the certificate is exactly the same as the given "subjectName"
                 foreach (X509Certificate2 c in certCollection)
                 {
-                    if (c.SubjectName.Name.Equals(string.Format("CN={0}", subjectName)))
+                    if (c.SubjectName.Name.Split(',')[0].Equals(string.Format("CN={0}", subjectName)))
                     {
-                        Console.WriteLine(c.SubjectName);
                         return c;
                     }
                 }
