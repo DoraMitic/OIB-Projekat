@@ -36,7 +36,7 @@ namespace Service
 			host.Credentials.ServiceCertificate.Certificate = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, srvCertCN);
 
 			// dpodesavamo da se koristi MyAuthorizationManager umesto ugradjenog
-			host.Authorization.ServiceAuthorizationManager = new MyAuthorizationManager();
+			//host.Authorization.ServiceAuthorizationManager = new MyAuthorizationManager(host.Credentials.ClientCertificate.Certificate);
 
 
 			try

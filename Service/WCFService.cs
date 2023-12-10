@@ -1,4 +1,5 @@
 ﻿using Common;
+using Manager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,19 +9,18 @@ using System.Threading;
 
 namespace Service
 {
-    public class WCFService : IWCFContract//, IPrincipal
+    public class WCFService : IWCFContract
     {
-        public List<string> Roles = new List<string> { "korisnik", "sluzbenik" };
-        public IIdentity Identity { get; set; }
 
         public void TestCommunication()
         {
             Console.WriteLine("Communication established.");
         }
 
-        public bool OtvoriRacun()
+        public bool OtvoriRacun(string clientGroup)
         {
-            if (Thread.CurrentPrincipal.IsInRole("sluzbenik"))
+            MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
+            if (Thread.CurrentPrincipal.IsInRole("OtvoriRacun"))
             {
                 //foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 //{
@@ -47,9 +47,9 @@ namespace Service
             return false;
         }
 
-        public bool ZatvoriRacun(long broj)
+        public bool ZatvoriRacun(string clientGroup, long broj)
         {
-            if (Thread.CurrentPrincipal.IsInRole("sluzbenik"))
+            if (Thread.CurrentPrincipal.IsInRole("ZatvoriRacun"))
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
                     if (racun.Value.Broj == broj)
@@ -69,9 +69,9 @@ namespace Service
             return false;
         }
 
-        public double ProveriStanje(long broj)
+        public double ProveriStanje(string clientGroup, long broj)
         {
-            if (Thread.CurrentPrincipal.IsInRole("sluzbenik") || Thread.CurrentPrincipal.IsInRole("korisnik"))
+            if (Thread.CurrentPrincipal.IsInRole("ProveriStanje"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -93,9 +93,9 @@ namespace Service
             return 0;
         }
 
-        public bool Uplata(long broj, double iznosUplate)
+        public bool Uplata(string clientGroup, long broj, double iznosUplate)
         {
-            if (Thread.CurrentPrincipal.IsInRole("sluzbenik") || Thread.CurrentPrincipal.IsInRole("korisnik"))
+            if (Thread.CurrentPrincipal.IsInRole("Uplata"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -130,9 +130,9 @@ namespace Service
             return false;
         }
 
-        public bool Isplata(long broj, double iznosIsplate)
+        public bool Isplata(string clientGroup, long broj, double iznosIsplate)
         {
-            if (Thread.CurrentPrincipal.IsInRole("sluzbenik") || Thread.CurrentPrincipal.IsInRole("korisnik"))
+            if (Thread.CurrentPrincipal.IsInRole("Isplata"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -172,9 +172,9 @@ namespace Service
             return false;
         }
 
-        public bool Opomena(long broj)
+        public bool Opomena(string clientGroup, long broj)
         {
-            if (Thread.CurrentPrincipal.IsInRole("sluzbenik"))
+            if (Thread.CurrentPrincipal.IsInRole("Opomena"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -205,17 +205,6 @@ namespace Service
             }
             return false;
         }
-
-        //public bool IsInRole(string role)
-        //{
-        //    if (Roles.Contains(role.ToLower()))
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
-        //public override bool IsInRole(string? role);
     }
 }
 
