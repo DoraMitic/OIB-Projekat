@@ -17,10 +17,10 @@ namespace Service
             Console.WriteLine("Communication established.");
         }
 
-        public bool OtvoriRacun(string clientGroup)
+        public bool OtvoriRacun()
         {
             MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
-            if (Thread.CurrentPrincipal.IsInRole("OtvoriRacun"))
+            if (principal.IsInRole("OtvoriRacun"))
             {
                 //foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 //{
@@ -32,6 +32,16 @@ namespace Service
                 Racun noviRacun = new Racun(randomFiveDigitNumber, 0, -500, 0, DateTime.Now);
 
                 Database.racuni.Add(name, noviRacun);
+
+                try
+                {
+                    Audit.AuthorizationSuccess(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
                 //}
                 //}
             }
@@ -39,6 +49,15 @@ namespace Service
             {
                 string name = Thread.CurrentPrincipal.Identity.Name;
                 DateTime time = DateTime.Now;
+                try
+                {
+                    Audit.AuthorizationFailed(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action, "OtvoriRacun method need OtvoriRacun permission.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
                 string message = String.Format("Access is denied. User {0} tried to call OtvoriRacun method (time: {1}). " +
                     "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
@@ -47,9 +66,10 @@ namespace Service
             return false;
         }
 
-        public bool ZatvoriRacun(string clientGroup, long broj)
+        public bool ZatvoriRacun(long broj)
         {
             if (Thread.CurrentPrincipal.IsInRole("ZatvoriRacun"))
+            {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
                     if (racun.Value.Broj == broj)
@@ -57,10 +77,32 @@ namespace Service
                         return Database.racuni.Remove(racun.Key);
                     }
                 }
+
+                string name = Thread.CurrentPrincipal.Identity.Name;
+
+                try
+                {
+                    Audit.AuthorizationSuccess(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
             else
             {
                 string name = Thread.CurrentPrincipal.Identity.Name;
                 DateTime time = DateTime.Now;
+                try
+                {
+                    Audit.AuthorizationFailed(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action, "ZatvoriRacun method need ZatvoriRacun permission.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
                 string message = String.Format("Access is denied. User {0} tried to call ZatvoriRacun method (time: {1}). " +
                     "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
@@ -69,7 +111,7 @@ namespace Service
             return false;
         }
 
-        public double ProveriStanje(string clientGroup, long broj)
+        public double ProveriStanje(long broj)
         {
             if (Thread.CurrentPrincipal.IsInRole("ProveriStanje"))
             {
@@ -81,19 +123,40 @@ namespace Service
                         return racun.Value.Iznos;
                     }
                 }
+
+                string name = Thread.CurrentPrincipal.Identity.Name;
+
+                try
+                {
+                    Audit.AuthorizationSuccess(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
             else
             {
                 string name = Thread.CurrentPrincipal.Identity.Name;
                 DateTime time = DateTime.Now;
-                string message = String.Format("Access is denied. User {0} tried to call ZatvoriRacun method (time: {1}). " +
+                try
+                {
+                    Audit.AuthorizationFailed(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action, "ProveriStanje method need ProveriStanje permission.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                string message = String.Format("Access is denied. User {0} tried to call ProveriStanje method (time: {1}). " +
                     "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
             return 0;
         }
 
-        public bool Uplata(string clientGroup, long broj, double iznosUplate)
+        public bool Uplata(long broj, double iznosUplate)
         {
             if (Thread.CurrentPrincipal.IsInRole("Uplata"))
             {
@@ -114,6 +177,18 @@ namespace Service
                     }
                     racun.Value.Iznos = novoStanje;
 
+                    string name = Thread.CurrentPrincipal.Identity.Name;
+
+                    try
+                    {
+                        Audit.AuthorizationSuccess(name,
+                            OperationContext.Current.IncomingMessageHeaders.Action);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+
                     Console.WriteLine($"Uplata na račun (Broj: {racun.Value.Broj}). Novo stanje: {racun.Value.Iznos}");
                     return true;
                 }
@@ -123,17 +198,39 @@ namespace Service
             {
                 string name = Thread.CurrentPrincipal.Identity.Name;
                 DateTime time = DateTime.Now;
-                string message = String.Format("Access is denied. User {0} tried to call ZatvoriRacun method (time: {1}). " +
+                try
+                {
+                    Audit.AuthorizationFailed(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action, "Uplata method need Uplata permission.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                string message = String.Format("Access is denied. User {0} tried to call Uplata method (time: {1}). " +
                     "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
             return false;
         }
 
-        public bool Isplata(string clientGroup, long broj, double iznosIsplate)
+        public bool Isplata(long broj, double iznosIsplate)
         {
             if (Thread.CurrentPrincipal.IsInRole("Isplata"))
             {
+
+                string name = Thread.CurrentPrincipal.Identity.Name;
+
+                try
+                {
+                    Audit.AuthorizationSuccess(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
                     if (racun.Value.Broj == broj)
@@ -165,17 +262,39 @@ namespace Service
             {
                 string name = Thread.CurrentPrincipal.Identity.Name;
                 DateTime time = DateTime.Now;
-                string message = String.Format("Access is denied. User {0} tried to call ZatvoriRacun method (time: {1}). " +
+                try
+                {
+                    Audit.AuthorizationFailed(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action, "Isplata method need Isplata permission.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                string message = String.Format("Access is denied. User {0} tried to call Isplata method (time: {1}). " +
                     "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
             return false;
         }
 
-        public bool Opomena(string clientGroup, long broj)
+        public bool Opomena(long broj)
         {
             if (Thread.CurrentPrincipal.IsInRole("Opomena"))
             {
+
+                string name = Thread.CurrentPrincipal.Identity.Name;
+
+                try
+                {
+                    Audit.AuthorizationSuccess(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
                     if (racun.Value.Broj == broj)
@@ -199,6 +318,18 @@ namespace Service
             {
                 string name = Thread.CurrentPrincipal.Identity.Name;
                 DateTime time = DateTime.Now;
+
+                try
+                {
+                    Audit.AuthorizationFailed(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action, "Opomena method need Opomena permission.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+
                 string message = String.Format("Access is denied. User {0} tried to call Opomena method (time: {1}). " +
                     "For this method user needs to be a member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));

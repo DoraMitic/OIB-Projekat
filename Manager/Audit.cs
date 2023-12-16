@@ -10,7 +10,7 @@ namespace Manager
 	{
 
 		private static EventLog customLog = null;
-		const string SourceName = "SecurityManager.Audit";
+		const string SourceName = "Manager.Audit";
 		const string LogName = "MySecTest";
 
 		static Audit()

@@ -39,6 +39,9 @@ namespace Service
 			// dpodesavamo da se koristi MyAuthorizationManager umesto ugradjenog
 			//host.Authorization.ServiceAuthorizationManager = new MyAuthorizationManager(host.Credentials.ClientCertificate.Certificate);
 
+			// TO DO : podesavanje AutidBehaviour-a
+			Audit audit = new Audit();
+
 			ServiceSecurityAuditBehavior newAudit = new ServiceSecurityAuditBehavior();
 			newAudit.AuditLogLocation = AuditLogLocation.Application;
 			newAudit.ServiceAuthorizationAuditLevel = AuditLevel.SuccessOrFailure;
