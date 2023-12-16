@@ -14,27 +14,27 @@ namespace Common
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		bool OtvoriRacun(string clientGroup);
+		bool OtvoriRacun();
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		bool ZatvoriRacun(string clientGroup, long broj);
+		bool ZatvoriRacun(long broj);
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		double ProveriStanje(string clientGroup, long broj);
+		double ProveriStanje(long broj);
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		bool Uplata(string clientGroup, long broj, double iznos);
+		bool Uplata(long broj, double iznos);
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		bool Isplata(string clientGroup, long broj, double iznos);
+		bool Isplata(long broj, double iznos);
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		bool Opomena(string clientGroup, long broj);
+		bool Opomena(long broj);
 
 	}
 }

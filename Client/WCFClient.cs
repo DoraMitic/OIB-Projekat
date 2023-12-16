@@ -27,7 +27,7 @@ namespace Client
                 this.Credentials.ClientCertificate.Certificate = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, cltCertCN);
 
                 MyAuthorizationManager myAuthorizationManager = new MyAuthorizationManager(this.Credentials.ClientCertificate.Certificate);
-
+                
                 factory = this.CreateChannel();
             }
             catch (Exception e)
@@ -63,12 +63,12 @@ namespace Client
             this.Close();
         }
 
-        public bool OtvoriRacun(string clientGroup)
+        public bool OtvoriRacun()
         {
             bool retValue = false;
             try
             {
-                retValue = factory.OtvoriRacun(clientGroup);
+                retValue = factory.OtvoriRacun();
                 //Console.WriteLine("Delete allowed");
             }
             catch (FaultException<SecurityException> e)
@@ -82,12 +82,12 @@ namespace Client
             return retValue;
         }
 
-        public bool ZatvoriRacun(string clientGroup, long broj)
+        public bool ZatvoriRacun(long broj)
         {
             bool retValue = false;
             try
             {
-                retValue = factory.ZatvoriRacun(clientGroup, broj);
+                retValue = factory.ZatvoriRacun(broj);
                 Console.WriteLine("Delete allowed");
             }
             catch (FaultException<SecurityException> e)
@@ -101,12 +101,12 @@ namespace Client
             return retValue;
         }
 
-        public double ProveriStanje(string clientGroup, long broj)
+        public double ProveriStanje(long broj)
         {
             double retValue = 0;
             try
             {
-                retValue = factory.ProveriStanje(clientGroup, broj);
+                retValue = factory.ProveriStanje(broj);
                 //Console.WriteLine("Delete allowed");
             }
             catch (FaultException<SecurityException> e)
@@ -120,12 +120,12 @@ namespace Client
             return retValue;
         }
 
-        public bool Uplata(string clientGroup, long broj, double iznos)
+        public bool Uplata(long broj, double iznos)
         {
             bool retValue = false;
             try
             {
-                retValue = factory.Uplata(clientGroup, broj, iznos);
+                retValue = factory.Uplata(broj, iznos);
                 //Console.WriteLine("Delete allowed");
             }
             catch (FaultException<SecurityException> e)
@@ -139,12 +139,12 @@ namespace Client
             return retValue;
         }
 
-        public bool Isplata(string clientGroup, long broj, double iznos)
+        public bool Isplata(long broj, double iznos)
         {
             bool retValue = false;
             try
             {
-                retValue = factory.Isplata(clientGroup, broj, iznos);
+                retValue = factory.Isplata(broj, iznos);
                 //Console.WriteLine("Delete allowed");
             }
             catch (FaultException<SecurityException> e)
@@ -158,12 +158,12 @@ namespace Client
             return retValue;
         }
 
-        public bool Opomena(string clientGroup, long broj)
+        public bool Opomena(long broj)
         {
             bool retValue = false;
             try
             {
-                retValue = factory.Opomena(clientGroup, broj);
+                retValue = factory.Opomena(broj);
                 //Console.WriteLine("Delete allowed");
             }
             catch (FaultException<SecurityException> e)

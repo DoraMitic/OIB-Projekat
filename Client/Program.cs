@@ -26,8 +26,8 @@ namespace Client
             using (WCFClient proxy = new WCFClient(binding, address))
             {
                 // Extract OU from the client's certificate
-                string clientOu = ExtractOuFromCertificate(proxy.Credentials.ClientCertificate.Certificate);
-                Console.WriteLine("OU from client's certificate: " + clientOu);
+                //string clientOu = ExtractOuFromCertificate(proxy.Credentials.ClientCertificate.Certificate);
+                //Console.WriteLine("OU from client's certificate: " + clientOu);
 
                 /// 1. Communication test
                 proxy.TestCommunication();
@@ -35,36 +35,36 @@ namespace Client
                 Console.ReadLine();
 
                 Console.WriteLine("Otvaranje racuna...");
-                proxy.OtvoriRacun(clientOu);
+                proxy.OtvoriRacun();
 
                 Console.WriteLine("Zatvaranje racuna...");
                 Console.WriteLine("Unesite broj racuna:");
                 long broj = long.Parse(Console.ReadLine());
-                proxy.ZatvoriRacun(clientOu, broj);
+                proxy.ZatvoriRacun(broj);
 
                 Console.WriteLine("Provera stanja racuna...");
                 Console.WriteLine("Unesite broj racuna:");
                 broj = long.Parse(Console.ReadLine());
-                proxy.ProveriStanje(clientOu, broj);
+                proxy.ProveriStanje(broj);
 
                 Console.WriteLine("Uplata na racun...");
                 Console.WriteLine("Unesite broj racuna:");
                 broj = long.Parse(Console.ReadLine());
                 Console.WriteLine("Unesite iznos uplate:");
                 double uplata = double.Parse(Console.ReadLine());
-                proxy.Uplata(clientOu, broj, uplata);
+                proxy.Uplata(broj, uplata);
 
                 Console.WriteLine("Isplata sa racuna...");
                 Console.WriteLine("Unesite broj racuna:");
                 broj = long.Parse(Console.ReadLine());
                 Console.WriteLine("Unesite iznos isplate:");
                 double isplata = double.Parse(Console.ReadLine());
-                proxy.Isplata(clientOu, broj, isplata);
+                proxy.Isplata(broj, isplata);
 
                 Console.WriteLine("Provera opomene...");
                 Console.WriteLine("Unesite broj racuna:");
                 broj = long.Parse(Console.ReadLine());
-                proxy.Opomena(clientOu, broj);
+                proxy.Opomena(broj);
 
             }
 
