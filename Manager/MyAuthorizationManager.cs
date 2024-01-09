@@ -8,13 +8,25 @@ namespace Manager
     public class MyAuthorizationManager : ServiceAuthorizationManager, IPrincipal
     {
         private readonly IIdentity identity;
-
         public MyAuthorizationManager(X509Certificate2 clientCertificate)
         {
-            this.identity = new GenericIdentity(clientCertificate.SubjectName.Name);
+            string subjectName = clientCertificate.Subject;
+            this.identity = new GenericIdentity(subjectName, "X.509");
         }
 
-        public IIdentity Identity => this.identity;
+        public IIdentity Identity
+        {
+            get { return identity; }
+        }
+
+        //private readonly IIdentity identity;
+
+        //public MyAuthorizationManager(X509Certificate2 clientCertificate)
+        //{
+        //    this.identity = new GenericIdentity(clientCertificate.SubjectName.Name);
+        //}
+
+        //public IIdentity Identity => this.identity;
 
         // Override IsInRole method
         public bool IsInRole(string role)
@@ -23,6 +35,7 @@ namespace Manager
             {
                 // Extract username from the certificate subject
                 string username = ExtractUsernameFromCertificate(genericIdentity);
+                Console.WriteLine("IsInRole");
 
                 // Check if the username is associated with the specified role in the roles configuration
                 return IsUserInRole(username, role);

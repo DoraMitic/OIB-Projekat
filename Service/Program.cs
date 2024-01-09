@@ -9,6 +9,7 @@ using Manager;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.ServiceModel.Description;
+using System.IdentityModel.Policy;
 
 namespace Service
 {
@@ -16,6 +17,7 @@ namespace Service
 	{
 		static void Main(string[] args)
 		{
+			Console.ReadKey();
 			/// srvCertCN.SubjectName should be set to the service's username. .NET WindowsIdentity class provides information about Windows user running the given process
 			string srvCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
 
@@ -25,6 +27,8 @@ namespace Service
 			string address = "net.tcp://localhost:9999/Receiver";
 			ServiceHost host = new ServiceHost(typeof(WCFService));
 			host.AddServiceEndpoint(typeof(IWCFContract), binding, address);
+
+
 
 			///Custom validation mode enables creation of a custom validator - CustomCertificateValidator
 			host.Credentials.ClientCertificate.Authentication.CertificateValidationMode = X509CertificateValidationMode.Custom;
@@ -38,6 +42,13 @@ namespace Service
 
 			// dpodesavamo da se koristi MyAuthorizationManager umesto ugradjenog
 			//host.Authorization.ServiceAuthorizationManager = new MyAuthorizationManager(host.Credentials.ClientCertificate.Certificate);
+			//host.Authorization.ServiceAuthorizationManager = new MyAuthorizationManager();
+
+			// podesavamo custom polisu, odnosno nas objekat principala
+			host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
+			List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
+			policies.Add(new CustomAuthorizationPolicy());
+			host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
 
 			// TO DO : podesavanje AutidBehaviour-a
 			Audit audit = new Audit();

@@ -53,6 +53,7 @@
     <Compile Include="AuditEvents.cs" />
     <Compile Include="CertManager.cs" />
     <Compile Include="ClientCertValidator.cs" />
+    <Compile Include="CustomAuthorizationPolicy.cs" />
     <Compile Include="Formatter.cs" />
     <Compile Include="MyAuthorizationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
