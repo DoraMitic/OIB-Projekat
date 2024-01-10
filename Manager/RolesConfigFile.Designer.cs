@@ -61,7 +61,7 @@ namespace Manager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uplata,Isplata.
+        ///   Looks up a localized string similar to Uplata,Isplata,ProveriStanje.
         /// </summary>
         internal static string Korisnik {
             get {

@@ -42,8 +42,6 @@ namespace Service
                 {
                     Console.WriteLine(e.Message);
                 }
-                //}
-                //}
             }
             else
             {
@@ -61,6 +59,7 @@ namespace Service
                 string message = String.Format("Access is denied. User {0} tried to call OtvoriRacun method (time: {1}). " +
                     "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
+
             }
 
             return false;
@@ -68,7 +67,8 @@ namespace Service
 
         public bool ZatvoriRacun(long broj)
         {
-            if (Thread.CurrentPrincipal.IsInRole("ZatvoriRacun"))
+            MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
+            if (principal.IsInRole("ZatvoriRacun"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -113,7 +113,8 @@ namespace Service
 
         public double ProveriStanje(long broj)
         {
-            if (Thread.CurrentPrincipal.IsInRole("ProveriStanje"))
+            MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
+            if (principal.IsInRole("ProveriStanje"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -158,7 +159,8 @@ namespace Service
 
         public bool Uplata(long broj, double iznosUplate)
         {
-            if (Thread.CurrentPrincipal.IsInRole("Uplata"))
+            MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
+            if (principal.IsInRole("Uplata"))
             {
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
@@ -216,7 +218,8 @@ namespace Service
 
         public bool Isplata(long broj, double iznosIsplate)
         {
-            if (Thread.CurrentPrincipal.IsInRole("Isplata"))
+            MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
+            if (principal.IsInRole("Isplata"))
             {
 
                 string name = Thread.CurrentPrincipal.Identity.Name;
@@ -280,7 +283,8 @@ namespace Service
 
         public bool Opomena(long broj)
         {
-            if (Thread.CurrentPrincipal.IsInRole("Opomena"))
+            MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
+            if (principal.IsInRole("Opomena"))
             {
 
                 string name = Thread.CurrentPrincipal.Identity.Name;

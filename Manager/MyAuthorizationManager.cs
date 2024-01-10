@@ -8,10 +8,11 @@ namespace Manager
     public class MyAuthorizationManager : ServiceAuthorizationManager, IPrincipal
     {
         private readonly IIdentity identity;
-        public MyAuthorizationManager(X509Certificate2 clientCertificate)
+        public MyAuthorizationManager(IIdentity clientCertificate)
         {
-            string subjectName = clientCertificate.Subject;
-            this.identity = new GenericIdentity(subjectName, "X.509");
+            //string subjectName = clientCertificate.Subject;
+            this.identity = clientCertificate;
+            Console.WriteLine(clientCertificate.Name);
         }
 
         public IIdentity Identity
@@ -31,20 +32,25 @@ namespace Manager
         // Override IsInRole method
         public bool IsInRole(string role)
         {
-            if (this.identity is GenericIdentity genericIdentity)
-            {
+            //if (this.identity is GenericIdentity genericIdentity)
+            //{
                 // Extract username from the certificate subject
-                string username = ExtractUsernameFromCertificate(genericIdentity);
-                Console.WriteLine("IsInRole");
+                string group = ExtractUsernameFromCertificate(Identity);
 
-                // Check if the username is associated with the specified role in the roles configuration
-                return IsUserInRole(username, role);
+            // Check if the username is associated with the specified role in the roles configuration
+            string[] roles;
+            RolesConfig.GetPermissions(group, out roles);
+            foreach (string permision in roles)
+            {
+                if (permision.Equals(role))
+                    return true;
             }
-
             return false;
+            //}
+
         }
 
-        private string ExtractUsernameFromCertificate(GenericIdentity genericIdentity)
+        private string ExtractUsernameFromCertificate(IIdentity genericIdentity)
         {
             // Replace this logic with your actual way of extracting the username from the certificate
             // Example: Assuming the subject is in the format "CN=username,O=organization"
@@ -53,27 +59,22 @@ namespace Manager
             {
                 if (part.Trim().StartsWith("OU=", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine(part.Substring(3).Trim());
-                    return part.Substring(3).Trim();
+                    if (part.Substring(4, 1) == "S")
+                    {
+                        Console.WriteLine(part.Substring(4, 9));
+                        return part.Substring(4, 9);
+                    }
+                    else if(part.Substring(4, 1) == "K")
+                    {
+                        Console.WriteLine(part.Substring(4, 8));
+                        return part.Substring(4, 8);
+                    }
                 }
             }
 
             return null;
         }
 
-        private bool IsUserInRole(string username, string role)
-        {
-            // Replace this logic with your actual way of checking if the user is in the specified role
-            // Example: Assuming roles are stored in a resource file RolesConfigFile.resx
-            string[] roles;
-            RolesConfig.GetPermissions(username, out roles);
-            foreach (string permision in roles)
-            {
-                if (permision.Equals(role))
-                    return true;
-            }
-            return false;
-        }
 
         // Other methods and properties of MyAuthorizationManager...
     }

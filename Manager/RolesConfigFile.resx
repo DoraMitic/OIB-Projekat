@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Korisnik" xml:space="preserve">
-    <value>Uplata,Isplata</value>
+    <value>Uplata,Isplata,ProveriStanje</value>
   </data>
   <data name="Sluzbenik" xml:space="preserve">
     <value>OtvoriRacun,ZatvoriRacun,ProveriStanje,Uplata,Isplata,Opomena</value>

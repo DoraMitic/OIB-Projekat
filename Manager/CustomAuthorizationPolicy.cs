@@ -29,12 +29,12 @@ namespace Manager
 
         public bool Evaluate(EvaluationContext evaluationContext, ref object state)
         {
-            if (!evaluationContext.Properties.TryGetValue("Certificates", out object list))
+            if (!evaluationContext.Properties.TryGetValue("Identities", out object list))
             {
                 return false;
             }
 
-            IList<X509Certificate2> certificates = list as IList<X509Certificate2>;
+            IList<IIdentity> certificates = list as IList<IIdentity>;
             if (list == null || certificates.Count <= 0)
             {
                 return false;
