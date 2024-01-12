@@ -3,7 +3,6 @@ using Manager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
 using System.ServiceModel;
 using System.Threading;
 
@@ -22,10 +21,6 @@ namespace Service
             MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
             if (principal.IsInRole("OtvoriRacun"))
             {
-                //foreach (KeyValuePair<string, Racun> racun in Database.racuni)
-                //{
-                //    if (racun.Value.Broj == 0)
-                //    {
                 string name = Thread.CurrentPrincipal.Identity.Name;
                 long randomFiveDigitNumber = Database.racuni.Last().Value.Broj + 1;
 
@@ -74,7 +69,8 @@ namespace Service
                 {
                     if (racun.Value.Broj == broj)
                     {
-                        return Database.racuni.Remove(racun.Key);
+                        Database.racuni.Remove(racun.Key);
+                        break;
                     }
                 }
 
@@ -89,6 +85,9 @@ namespace Service
                 {
                     Console.WriteLine(e.Message);
                 }
+
+                return true;
+
             }
             else
             {
@@ -103,28 +102,21 @@ namespace Service
                 {
                     Console.WriteLine(e.Message);
                 }
-                string message = String.Format("Access is denied. User {0} tried to call ZatvoriRacun method (time: {1}). " +
-                    "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
-                throw new FaultException<SecurityException>(new SecurityException(message));
+                finally
+                {
+                    string message = String.Format("Access is denied. User {0} tried to call ZatvoriRacun method (time: {1}). " +
+                        "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
+                    throw new FaultException<SecurityException>(new SecurityException(message));
+                }
             }
 
-            return false;
         }
 
-        public double ProveriStanje(long broj)
+        public string ProveriStanje(long broj)
         {
             MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
             if (principal.IsInRole("ProveriStanje"))
             {
-                foreach (KeyValuePair<string, Racun> racun in Database.racuni)
-                {
-                    if (racun.Value.Broj == broj)
-                    {
-                        //Console.WriteLine($"Stanje na racunu sa brojem {broj} je : {racun.Value.Iznos} ");
-                        return racun.Value.Iznos;
-                    }
-                }
-
                 string name = Thread.CurrentPrincipal.Identity.Name;
 
                 try
@@ -136,6 +128,15 @@ namespace Service
                 {
                     Console.WriteLine(e.Message);
                 }
+
+                foreach (KeyValuePair<string, Racun> racun in Database.racuni)
+                {
+                    if (racun.Value.Broj == broj)
+                    {
+                        return $"Stanje na racunu sa brojem {broj} je : {racun.Value.Iznos} ";
+                    }
+                }
+                return "Greska";
             }
             else
             {
@@ -154,14 +155,40 @@ namespace Service
                     "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
-            return 0;
         }
 
-        public bool Uplata(long broj, double iznosUplate)
+        public string Uplata(long broj, double iznosUplate)
         {
             MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
             if (principal.IsInRole("Uplata"))
             {
+                string name = Thread.CurrentPrincipal.Identity.Name;
+
+                try
+                {
+                    Audit.AuthorizationSuccess(name,
+                        OperationContext.Current.IncomingMessageHeaders.Action);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+                if(iznosUplate <= 0)
+                {
+                    try
+                    {
+                        Audit.TransactionFailed(name,
+                            OperationContext.Current.IncomingMessageHeaders.Action, "Transakcija neuspesna jer je iznos uplate u minusu ili nula.");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    return "Iznos uplate ne sme biti negativan ili 0.";
+                }
+
+                string retVal = "";
                 foreach (KeyValuePair<string, Racun> racun in Database.racuni)
                 {
                     double novoStanje = racun.Value.Iznos + iznosUplate;
@@ -172,27 +199,26 @@ namespace Service
                             if (racun.Value.Blokiran != 0)
                             {
                                 racun.Value.Blokiran = 0; // Odblokiraj račun
-                                Console.WriteLine($"Račun (Broj: {racun.Value.Broj}) je odblokiran nakon uplate.");
-                                return true;
+                                retVal += $"Račun (Broj: {racun.Value.Broj}) je odblokiran nakon uplate.";
                             }
                         }
-                    }
-                    racun.Value.Iznos = novoStanje;
+                        racun.Value.Iznos = novoStanje;
+                        retVal += $"Uplata na račun (Broj: {racun.Value.Broj}). Novo stanje: {racun.Value.Iznos}";
 
-                    string name = Thread.CurrentPrincipal.Identity.Name;
+                        try
+                        {
+                            Audit.TransactionSuccess(name,
+                                OperationContext.Current.IncomingMessageHeaders.Action);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
 
-                    try
-                    {
-                        Audit.AuthorizationSuccess(name,
-                            OperationContext.Current.IncomingMessageHeaders.Action);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
+                        return retVal;
                     }
 
-                    Console.WriteLine($"Uplata na račun (Broj: {racun.Value.Broj}). Novo stanje: {racun.Value.Iznos}");
-                    return true;
+
                 }
 
             }
@@ -213,10 +239,10 @@ namespace Service
                     "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
-            return false;
+            return "Greska";
         }
 
-        public bool Isplata(long broj, double iznosIsplate)
+        public string Isplata(long broj, double iznosIsplate)
         {
             MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
             if (principal.IsInRole("Isplata"))
@@ -240,13 +266,29 @@ namespace Service
                     {
                         if (racun.Value.Blokiran > 0)
                         {
-                            Console.WriteLine($"Isplata nije moguća. Račun (Broj: {racun.Value.Broj}) je blokiran.");
-                            return false;
+                            try
+                            {
+                                Audit.TransactionFailed(name,
+                                    OperationContext.Current.IncomingMessageHeaders.Action, "Transakcija neuspesna jer je racun blokiran.");
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+                            return $"Isplata nije moguća. Račun (Broj: {racun.Value.Broj}) je blokiran.";
                         }
-                        else if (iznosIsplate > racun.Value.DozvoljeniMinus)
+                        else if (racun.Value.Iznos - iznosIsplate < racun.Value.DozvoljeniMinus)
                         {
-                            Console.WriteLine($"Isplata nije moguća. Iznos isplate ({iznosIsplate}) je veći od dozvoljenog minusa ({racun.Value.DozvoljeniMinus}).");
-                            return false;
+                            try
+                            {
+                                Audit.TransactionFailed(name,
+                                    OperationContext.Current.IncomingMessageHeaders.Action, "Transakcija neuspesna jer je iznos isplate veci od dozvoljenog minusa.");
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+                            return $"Isplata nije moguća. Iznos isplate ({iznosIsplate}) je veći od dozvoljenog minusa ({racun.Value.DozvoljeniMinus}).";
                         }
                         else
                         {
@@ -254,8 +296,17 @@ namespace Service
 
                             racun.Value.Iznos = novoStanje;
 
-                            Console.WriteLine($"Isplata sa računa (Broj: {racun.Value.Broj}). Novo stanje: {racun.Value.Iznos}");
-                            return true;
+                            try
+                            {
+                                Audit.TransactionSuccess(name,
+                                    OperationContext.Current.IncomingMessageHeaders.Action);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+
+                            return $"Isplata sa računa (Broj: {racun.Value.Broj}). Novo stanje: {racun.Value.Iznos}";
                         }
 
                     }
@@ -278,10 +329,10 @@ namespace Service
                     "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
-            return false;
+            return "Greska";
         }
 
-        public bool Opomena(long broj)
+        public string Opomena(long broj)
         {
             MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
             if (principal.IsInRole("Opomena"))
@@ -307,13 +358,11 @@ namespace Service
                         {
                             // Blokiranje računa ako korisnik ima dugovanje (minus) i račun nije već blokiran
                             racun.Value.Blokiran = 1;
-                            Console.WriteLine($"Račun (Broj: {racun.Value.Broj}) je blokiran zbog duga.");
-                            return true;
+                            return $"Račun (Broj: {racun.Value.Broj}) je blokiran zbog duga.";
                         }
                         else
                         {
-                            Console.WriteLine($"Opomena nije potrebna. Račun (Broj: {racun.Value.Broj}) nije u minusu ili je već blokiran.");
-                            return false;
+                            return $"Opomena nije potrebna. Račun (Broj: {racun.Value.Broj}) nije u minusu ili je već blokiran.";
                         }
                     }
                 }
@@ -338,7 +387,7 @@ namespace Service
                     "For this method user needs to be a member of group Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
-            return false;
+            return "Greska";
         }
     }
 }

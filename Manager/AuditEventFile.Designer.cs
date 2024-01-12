@@ -61,6 +61,15 @@ namespace Manager {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User {0} failed to be authenticated. Reason: {1}..
+        /// </summary>
+        internal static string AuthenticationFailed {
+            get {
+                return ResourceManager.GetString("AuthenticationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User {0} is successfully authenticated..
         /// </summary>
         internal static string AuthenticationSuccess {
@@ -72,9 +81,9 @@ namespace Manager {
         /// <summary>
         ///   Looks up a localized string similar to User {0} failed to access {1}. Reason: {2}..
         /// </summary>
-        internal static string AuthorizationFailure {
+        internal static string AuthorizationFailed {
             get {
-                return ResourceManager.GetString("AuthorizationFailure", resourceCulture);
+                return ResourceManager.GetString("AuthorizationFailed", resourceCulture);
             }
         }
         
@@ -84,6 +93,24 @@ namespace Manager {
         internal static string AuthorizationSuccess {
             get {
                 return ResourceManager.GetString("AuthorizationSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User {0} failed to finish a transaction {1}. Reason: {2}..
+        /// </summary>
+        internal static string TransactionFailed {
+            get {
+                return ResourceManager.GetString("TransactionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User {0} successfully finished a transaction {1}..
+        /// </summary>
+        internal static string TransactionSuccess {
+            get {
+                return ResourceManager.GetString("TransactionSuccess", resourceCulture);
             }
         }
     }

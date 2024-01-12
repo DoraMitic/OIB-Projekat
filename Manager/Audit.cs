@@ -92,6 +92,66 @@ namespace Manager
 			}
 		}
 
+		public static void AuthenticationFailed(string userName, string reason)
+		{
+			//TO DO
+
+			if (customLog != null)
+			{
+				string UserAuthenticationFailed =
+					AuditEvents.AuthenticationFailed;
+				string message = String.Format(UserAuthenticationFailed,
+					userName, reason);
+				customLog.WriteEntry(message);
+			}
+			else
+			{
+				throw new ArgumentException(string.Format("Error while trying to write event (eventid = {0}) to event log.",
+					(int)AuditEventTypes.AuthenticationFailed));
+			}
+		}
+
+		public static void TransactionSuccess(string userName, string serviceName)
+		{
+			//TO DO
+			if (customLog != null)
+			{
+				string TransactionSuccess =
+					AuditEvents.TransactionSuccess;
+				string message = String.Format(TransactionSuccess,
+					userName, serviceName);
+				customLog.WriteEntry(message);
+			}
+			else
+			{
+				throw new ArgumentException(string.Format("Error while trying to write event (eventid = {0}) to event log.",
+					(int)AuditEventTypes.TransactionSuccess));
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="userName"></param>
+		/// <param name="serviceName"> should be read from the OperationContext as follows: OperationContext.Current.IncomingMessageHeaders.Action</param>
+		/// <param name="reason">permission name</param>
+		public static void TransactionFailed(string userName, string serviceName, string reason)
+		{
+			if (customLog != null)
+			{
+				string TransactionFailed =
+					AuditEvents.TransactionFailed;
+				string message = String.Format(TransactionFailed,
+					userName, serviceName, reason);
+				customLog.WriteEntry(message);
+			}
+			else
+			{
+				throw new ArgumentException(string.Format("Error while trying to write event (eventid = {0}) to event log.",
+					(int)AuditEventTypes.TransactionFailed));
+			}
+		}
+
 		public void Dispose()
 		{
 			if (customLog != null)

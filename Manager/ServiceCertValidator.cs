@@ -5,6 +5,7 @@ using System.Text;
 using System.IdentityModel.Selectors;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
+using System.Threading;
 
 namespace Manager
 {
@@ -24,6 +25,8 @@ namespace Manager
 
 			if (!certificate.Issuer.Equals(srvCert.Issuer))
 			{
+				Audit.AuthenticationFailed(srvCert.Subject, "Certificate is not from the valid issuer.");
+
 				throw new Exception("Certificate is not from the valid issuer.");
 			}
 		}

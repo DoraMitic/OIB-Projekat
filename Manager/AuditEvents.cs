@@ -12,7 +12,10 @@ namespace Manager
 	{
 		AuthenticationSuccess = 0,
 		AuthorizationSuccess = 1,
-		AuthorizationFailed = 2
+		AuthorizationFailed = 2,
+		AuthenticationFailed = 3,
+		TransactionSuccess = 4,
+		TransactionFailed = 5
 	}
 
 	public class AuditEvents
@@ -61,6 +64,33 @@ namespace Manager
 			{
 				//TO DO
 				return ResourceMgr.GetString(AuditEventTypes.AuthorizationFailed.ToString());
+			}
+		}
+
+		public static string AuthenticationFailed
+		{
+			get
+			{
+				// TO DO
+				return ResourceMgr.GetString(AuditEventTypes.AuthenticationFailed.ToString());
+			}
+		}
+
+		public static string TransactionSuccess
+		{
+			get
+			{
+				// TO DO
+				return ResourceMgr.GetString(AuditEventTypes.TransactionSuccess.ToString());
+			}
+		}
+
+		public static string TransactionFailed
+		{
+			get
+			{
+				// TO DO
+				return ResourceMgr.GetString(AuditEventTypes.TransactionFailed.ToString());
 			}
 		}
 	}

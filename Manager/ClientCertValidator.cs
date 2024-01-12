@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Manager
@@ -25,6 +26,8 @@ namespace Manager
 
 			if (!certificate.Issuer.Equals(cltCert.Issuer))
 			{
+				Audit.AuthenticationFailed(cltCert.Subject, "Certificate is not from the valid issuer.");
+
 				throw new Exception("Certificate is not from the valid issuer.");
 			}
 		}

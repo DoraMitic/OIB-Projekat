@@ -4,6 +4,7 @@ using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.ServiceModel;
+using System.Threading;
 
 namespace Client
 {
@@ -45,9 +46,12 @@ namespace Client
             try
             {
                 factory.TestCommunication();
+                Audit.AuthenticationSuccess(WindowsIdentity.GetCurrent().Name);
             }
             catch (Exception e)
             {
+                Audit.AuthenticationFailed(WindowsIdentity.GetCurrent().Name, e.Message);
+                
                 Console.WriteLine("[TestCommunication] ERROR = {0}", e.Message);
             }
         }
@@ -68,7 +72,7 @@ namespace Client
             try
             {
                 retValue = factory.OtvoriRacun();
-                //Console.WriteLine("Delete allowed");
+                Console.WriteLine("Racun uspesno otvoren.");
             }
             catch (FaultException<SecurityException> e)
             {
@@ -87,26 +91,26 @@ namespace Client
             try
             {
                 retValue = factory.ZatvoriRacun(broj);
-                Console.WriteLine("Delete allowed");
+                Console.WriteLine("Racun uspesno zatvoren.");
             }
             catch (FaultException<SecurityException> e)
             {
-                Console.WriteLine("Error while trying to Delete : {0}", e.Detail.Message);
+                Console.WriteLine("Greska prilikom zatvaranja racuna : {0}", e.Detail.Message);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error while trying to Delete : {0}", e.Message);
+                Console.WriteLine("Greska prilikom zatvaranja racuna : {0}", e.Message);
             }
             return retValue;
         }
 
-        public double ProveriStanje(long broj)
+        public string ProveriStanje(long broj)
         {
-            double retValue = 0;
+            string retValue = "";
             try
             {
                 retValue = factory.ProveriStanje(broj);
-                //Console.WriteLine("Delete allowed");
+                Console.WriteLine(retValue);
             }
             catch (FaultException<SecurityException> e)
             {
@@ -119,13 +123,13 @@ namespace Client
             return retValue;
         }
 
-        public bool Uplata(long broj, double iznos)
+        public string Uplata(long broj, double iznos)
         {
-            bool retValue = false;
+            string retValue = "";
             try
             {
                 retValue = factory.Uplata(broj, iznos);
-                //Console.WriteLine("Delete allowed");
+                Console.WriteLine(retValue);
             }
             catch (FaultException<SecurityException> e)
             {
@@ -138,13 +142,13 @@ namespace Client
             return retValue;
         }
 
-        public bool Isplata(long broj, double iznos)
+        public string Isplata(long broj, double iznos)
         {
-            bool retValue = false;
+            string retValue = "";
             try
             {
                 retValue = factory.Isplata(broj, iznos);
-                //Console.WriteLine("Delete allowed");
+                Console.WriteLine(retValue);
             }
             catch (FaultException<SecurityException> e)
             {
@@ -157,13 +161,13 @@ namespace Client
             return retValue;
         }
 
-        public bool Opomena(long broj)
+        public string Opomena(long broj)
         {
-            bool retValue = false;
+            string retValue;
             try
             {
                 retValue = factory.Opomena(broj);
-                //Console.WriteLine("Delete allowed");
+                Console.WriteLine(retValue);
             }
             catch (FaultException<SecurityException> e)
             {
@@ -173,7 +177,7 @@ namespace Client
             {
                 Console.WriteLine("Greska kod funkcije Opomena() : {0}", e.Message);
             }
-            return retValue;
+            return "Greska";
         }
     }
 }
