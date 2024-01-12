@@ -22,19 +22,19 @@ namespace Common
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		double ProveriStanje(long broj);
+		string ProveriStanje(long broj);
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		bool Uplata(long broj, double iznos);
+		string Uplata(long broj, double iznos);
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		bool Isplata(long broj, double iznos);
+		string Isplata(long broj, double iznos);
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		bool Opomena(long broj);
+		string Opomena(long broj);
 
 	}
 }
