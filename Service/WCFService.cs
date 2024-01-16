@@ -13,21 +13,15 @@ namespace Service
 
         public void TestCommunication()
         {
-            Console.WriteLine("Communication established.");
+            Console.WriteLine("Komunikacija je uspostavljena.");
         }
 
-        public bool OtvoriRacun()
+        public bool OtvoriRacun(string korisnik)
         {
             MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
             if (principal.IsInRole("OtvoriRacun"))
             {
-                string name = Thread.CurrentPrincipal.Identity.Name;
-                long randomFiveDigitNumber = Database.racuni.Last().Value.Broj + 1;
-
-                Racun noviRacun = new Racun(randomFiveDigitNumber, 0, -500, 0, DateTime.Now);
-
-                Database.racuni.Add(name, noviRacun);
-
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
                 try
                 {
                     Audit.AuthorizationSuccess(name,
@@ -37,27 +31,38 @@ namespace Service
                 {
                     Console.WriteLine(e.Message);
                 }
+
+                if (Database.racuni.ContainsKey(korisnik)){
+                    return false;
+                }
+
+                long randomFiveDigitNumber = Database.racuni.Last().Value.Broj + 1;
+
+                Racun noviRacun = new Racun(randomFiveDigitNumber, 0, -500, 0, DateTime.Now);
+
+                Database.racuni.Add(korisnik, noviRacun);
+
+                return true;
+
             }
             else
             {
-                string name = Thread.CurrentPrincipal.Identity.Name;
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
                 DateTime time = DateTime.Now;
                 try
                 {
                     Audit.AuthorizationFailed(name,
-                        OperationContext.Current.IncomingMessageHeaders.Action, "OtvoriRacun method need OtvoriRacun permission.");
+                        OperationContext.Current.IncomingMessageHeaders.Action, "OtvoriRacun metoda zahteva OtvoriRacun permisiju.");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
-                string message = String.Format("Access is denied. User {0} tried to call OtvoriRacun method (time: {1}). " +
-                    "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
+                string message = String.Format("Pristup nije odobren. Korisnik {0} je pokusao da pozove OtvoriRacun metodu (time: {1}). " +
+                    "Za pozivanje ove metode korisnik mora da bude u grupi Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
 
             }
-
-            return false;
         }
 
         public bool ZatvoriRacun(long broj)
@@ -65,17 +70,7 @@ namespace Service
             MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
             if (principal.IsInRole("ZatvoriRacun"))
             {
-                foreach (KeyValuePair<string, Racun> racun in Database.racuni)
-                {
-                    if (racun.Value.Broj == broj)
-                    {
-                        Database.racuni.Remove(racun.Key);
-                        break;
-                    }
-                }
-
-                string name = Thread.CurrentPrincipal.Identity.Name;
-
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
                 try
                 {
                     Audit.AuthorizationSuccess(name,
@@ -86,17 +81,26 @@ namespace Service
                     Console.WriteLine(e.Message);
                 }
 
-                return true;
+                foreach (KeyValuePair<string, Racun> racun in Database.racuni)
+                {
+                    if (racun.Value.Broj == broj)
+                    {
+                        Database.racuni.Remove(racun.Key);
+                        return true;
+                    }
+                }
+
+                return false;
 
             }
             else
             {
-                string name = Thread.CurrentPrincipal.Identity.Name;
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
                 DateTime time = DateTime.Now;
                 try
                 {
                     Audit.AuthorizationFailed(name,
-                        OperationContext.Current.IncomingMessageHeaders.Action, "ZatvoriRacun method need ZatvoriRacun permission.");
+                        OperationContext.Current.IncomingMessageHeaders.Action, "ZatvoriRacun metoda zahteva ZatvoriRacun permisiju.");
                 }
                 catch (Exception e)
                 {
@@ -104,8 +108,8 @@ namespace Service
                 }
                 finally
                 {
-                    string message = String.Format("Access is denied. User {0} tried to call ZatvoriRacun method (time: {1}). " +
-                        "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
+                    string message = String.Format("Pristup nije odobren. Korisnik {0} je pokusao da pozove ZatvoriRacun metodu (time: {1}). " +
+                        "Za pozivanje ove metode korisnik mora da bude u grupi Sluzbenik.", name, time.TimeOfDay);
                     throw new FaultException<SecurityException>(new SecurityException(message));
                 }
             }
@@ -117,7 +121,7 @@ namespace Service
             MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
             if (principal.IsInRole("ProveriStanje"))
             {
-                string name = Thread.CurrentPrincipal.Identity.Name;
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
 
                 try
                 {
@@ -136,23 +140,23 @@ namespace Service
                         return $"Stanje na racunu sa brojem {broj} je : {racun.Value.Iznos} ";
                     }
                 }
-                return "Greska";
+                return "Racun sa trazenim brojem racuna ne postoji.";
             }
             else
             {
-                string name = Thread.CurrentPrincipal.Identity.Name;
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
                 DateTime time = DateTime.Now;
                 try
                 {
                     Audit.AuthorizationFailed(name,
-                        OperationContext.Current.IncomingMessageHeaders.Action, "ProveriStanje method need ProveriStanje permission.");
+                        OperationContext.Current.IncomingMessageHeaders.Action, "ProveriStanje metoda zahteva ProveriStanje permisiju.");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
-                string message = String.Format("Access is denied. User {0} tried to call ProveriStanje method (time: {1}). " +
-                    "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
+                string message = String.Format("Pristup nije odobren. Korisnik {0} je pokusao da pozove ProveriStanje metodu (time: {1}). " +
+                    "Za pozivanje ove metode korisnik mora da bude u grupi Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
         }
@@ -162,7 +166,7 @@ namespace Service
             MyAuthorizationManager principal = Thread.CurrentPrincipal as MyAuthorizationManager;
             if (principal.IsInRole("Uplata"))
             {
-                string name = Thread.CurrentPrincipal.Identity.Name;
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
 
                 try
                 {
@@ -174,7 +178,7 @@ namespace Service
                     Console.WriteLine(e.Message);
                 }
 
-                if(iznosUplate <= 0)
+                if (iznosUplate <= 0)
                 {
                     try
                     {
@@ -221,22 +225,24 @@ namespace Service
 
                 }
 
+                return "Racun sa trazenim brojem racuna ne postoji.";
+
             }
             else
             {
-                string name = Thread.CurrentPrincipal.Identity.Name;
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
                 DateTime time = DateTime.Now;
                 try
                 {
                     Audit.AuthorizationFailed(name,
-                        OperationContext.Current.IncomingMessageHeaders.Action, "Uplata method need Uplata permission.");
+                        OperationContext.Current.IncomingMessageHeaders.Action, "Uplata metoda zahteva Uplata permisiju.");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
-                string message = String.Format("Access is denied. User {0} tried to call Uplata method (time: {1}). " +
-                    "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
+                string message = String.Format("Pristup nije odobren. Korisnik {0} je pokusao da pozove Uplata metodu (time: {1}). " +
+                    "Za pozivanje ove metode korisnik mora da bude u grupi Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
             return "Greska";
@@ -248,7 +254,7 @@ namespace Service
             if (principal.IsInRole("Isplata"))
             {
 
-                string name = Thread.CurrentPrincipal.Identity.Name;
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
 
                 try
                 {
@@ -264,7 +270,7 @@ namespace Service
                 {
                     if (racun.Value.Broj == broj)
                     {
-                        if (racun.Value.Blokiran > 0)
+                        if (racun.Value.Blokiran == 1)
                         {
                             try
                             {
@@ -288,7 +294,7 @@ namespace Service
                             {
                                 Console.WriteLine(e.Message);
                             }
-                            return $"Isplata nije moguća. Iznos isplate ({iznosIsplate}) je veći od dozvoljenog minusa ({racun.Value.DozvoljeniMinus}).";
+                            return $"Isplata nije moguća. Iznos isplate prevazilazi dozvoljeni minus ({racun.Value.DozvoljeniMinus}).";
                         }
                         else
                         {
@@ -311,22 +317,24 @@ namespace Service
 
                     }
                 }
+
+                return "Racun sa trazenim brojem racuna ne postoji.";
             }
             else
             {
-                string name = Thread.CurrentPrincipal.Identity.Name;
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
                 DateTime time = DateTime.Now;
                 try
                 {
                     Audit.AuthorizationFailed(name,
-                        OperationContext.Current.IncomingMessageHeaders.Action, "Isplata method need Isplata permission.");
+                        OperationContext.Current.IncomingMessageHeaders.Action, "Isplata metoda zahteva Isplata permisiju.");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
-                string message = String.Format("Access is denied. User {0} tried to call Isplata method (time: {1}). " +
-                    "For this method user needs to be member of group Sluzbenik.", name, time.TimeOfDay);
+                string message = String.Format("Pristup nije odobren. Korisnik {0} je pokusao da pozove Isplata metodu (time: {1}). " +
+                    "Za pozivanje ove metode korisnik mora da bude u grupi Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
             return "Greska";
@@ -338,7 +346,7 @@ namespace Service
             if (principal.IsInRole("Opomena"))
             {
 
-                string name = Thread.CurrentPrincipal.Identity.Name;
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
 
                 try
                 {
@@ -366,16 +374,18 @@ namespace Service
                         }
                     }
                 }
+
+                return "Racun sa trazenim brojem racuna ne postoji.";
             }
             else
             {
-                string name = Thread.CurrentPrincipal.Identity.Name;
+                string name = Thread.CurrentPrincipal.Identity.Name.Substring(3, 10);
                 DateTime time = DateTime.Now;
 
                 try
                 {
                     Audit.AuthorizationFailed(name,
-                        OperationContext.Current.IncomingMessageHeaders.Action, "Opomena method need Opomena permission.");
+                        OperationContext.Current.IncomingMessageHeaders.Action, "Opomena metoda zahteva Opomena permisiju.");
                 }
                 catch (Exception e)
                 {
@@ -383,8 +393,8 @@ namespace Service
                 }
 
 
-                string message = String.Format("Access is denied. User {0} tried to call Opomena method (time: {1}). " +
-                    "For this method user needs to be a member of group Sluzbenik.", name, time.TimeOfDay);
+                string message = String.Format("Pristup nije odobren. Korisnik {0} je pokusao da pozove Opomena metodu (time: {1}). " +
+                    "Za pozivanje ove metode korisnik mora da bude u grupi Sluzbenik.", name, time.TimeOfDay);
                 throw new FaultException<SecurityException>(new SecurityException(message));
             }
             return "Greska";

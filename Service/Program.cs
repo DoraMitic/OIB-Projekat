@@ -40,17 +40,13 @@ namespace Service
 			///Set appropriate service's certificate on the host. Use CertManager class to obtain the certificate based on the "srvCertCN"
 			host.Credentials.ServiceCertificate.Certificate = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, srvCertCN);
 
-			// dpodesavamo da se koristi MyAuthorizationManager umesto ugradjenog
-			//host.Authorization.ServiceAuthorizationManager = new MyAuthorizationManager(host.Credentials.ClientCertificate.Certificate);
-			//host.Authorization.ServiceAuthorizationManager = new MyAuthorizationManager();
-
 			// podesavamo custom polisu, odnosno nas objekat principala
 			host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
 			List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
 			policies.Add(new CustomAuthorizationPolicy());
 			host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
 
-			// TO DO : podesavanje AutidBehaviour-a
+			// podesavanje AutidBehaviour-a
 			Audit audit = new Audit();
 
 			ServiceSecurityAuditBehavior newAudit = new ServiceSecurityAuditBehavior();
@@ -63,7 +59,7 @@ namespace Service
 			try
 			{
 				host.Open();
-				Console.WriteLine("WCFService is started.\nPress <enter> to stop ...");
+				Console.WriteLine("WCFService je pokrenut.\nPritisnite <enter> da zaustavite ...");
 				Console.ReadLine();
 			}
 			catch (Exception e)

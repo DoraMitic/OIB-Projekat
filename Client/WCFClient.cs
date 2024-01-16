@@ -66,13 +66,20 @@ namespace Client
             this.Close();
         }
 
-        public bool OtvoriRacun()
+        public bool OtvoriRacun(string korisnik)
         {
             bool retValue = false;
             try
             {
-                retValue = factory.OtvoriRacun();
-                Console.WriteLine("Racun uspesno otvoren.");
+                retValue = factory.OtvoriRacun(korisnik);
+                if (retValue)
+                {
+                    Console.WriteLine("Racun uspesno otvoren.");
+                }
+                else
+                {
+                    Console.WriteLine("Trazeni korisnik vec ima otvoren racun.");
+                }
             }
             catch (FaultException<SecurityException> e)
             {
@@ -91,7 +98,14 @@ namespace Client
             try
             {
                 retValue = factory.ZatvoriRacun(broj);
-                Console.WriteLine("Racun uspesno zatvoren.");
+                if (retValue)
+                {
+                    Console.WriteLine("Racun uspesno zatvoren.");
+                }
+                else
+                {
+                    Console.WriteLine("Racun sa trazenim brojem racuna ne postoji.");
+                }
             }
             catch (FaultException<SecurityException> e)
             {

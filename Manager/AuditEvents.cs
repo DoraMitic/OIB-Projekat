@@ -44,7 +44,6 @@ namespace Manager
 		{
 			get
 			{
-				// TO DO
 				return ResourceMgr.GetString(AuditEventTypes.AuthenticationSuccess.ToString());
 			}
 		}
@@ -53,7 +52,6 @@ namespace Manager
 		{
 			get
 			{
-				//TO DO
 				return ResourceMgr.GetString(AuditEventTypes.AuthorizationSuccess.ToString());
 			}
 		}
@@ -62,7 +60,6 @@ namespace Manager
 		{
 			get
 			{
-				//TO DO
 				return ResourceMgr.GetString(AuditEventTypes.AuthorizationFailed.ToString());
 			}
 		}
@@ -71,7 +68,6 @@ namespace Manager
 		{
 			get
 			{
-				// TO DO
 				return ResourceMgr.GetString(AuditEventTypes.AuthenticationFailed.ToString());
 			}
 		}
@@ -80,7 +76,6 @@ namespace Manager
 		{
 			get
 			{
-				// TO DO
 				return ResourceMgr.GetString(AuditEventTypes.TransactionSuccess.ToString());
 			}
 		}
@@ -89,7 +84,6 @@ namespace Manager
 		{
 			get
 			{
-				// TO DO
 				return ResourceMgr.GetString(AuditEventTypes.TransactionFailed.ToString());
 			}
 		}

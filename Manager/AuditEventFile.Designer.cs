@@ -61,7 +61,7 @@ namespace Manager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User {0} failed to be authenticated. Reason: {1}..
+        ///   Looks up a localized string similar to Neuspesna autentifikacija korisnika {0}. Razlog: {1}..
         /// </summary>
         internal static string AuthenticationFailed {
             get {
@@ -70,7 +70,7 @@ namespace Manager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User {0} is successfully authenticated..
+        ///   Looks up a localized string similar to Korisnik {0} je uspesno autentifikovan..
         /// </summary>
         internal static string AuthenticationSuccess {
             get {
@@ -79,7 +79,7 @@ namespace Manager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User {0} failed to access {1}. Reason: {2}..
+        ///   Looks up a localized string similar to Korisnik {0} nije uspeo da pristupi {1}. Razlog: {2}..
         /// </summary>
         internal static string AuthorizationFailed {
             get {
@@ -88,7 +88,7 @@ namespace Manager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User {0} successfully accessed to {1}..
+        ///   Looks up a localized string similar to Korisnik {0} je uspesno pristupio {1}..
         /// </summary>
         internal static string AuthorizationSuccess {
             get {
@@ -97,7 +97,7 @@ namespace Manager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User {0} failed to finish a transaction {1}. Reason: {2}..
+        ///   Looks up a localized string similar to Korisnik {0} nije uspeo da izvrsi transakciju {1}. Razlog: {2}..
         /// </summary>
         internal static string TransactionFailed {
             get {
@@ -106,7 +106,7 @@ namespace Manager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User {0} successfully finished a transaction {1}..
+        ///   Looks up a localized string similar to Korisnik {0} je uspesno izvrsio transakciju {1}..
         /// </summary>
         internal static string TransactionSuccess {
             get {

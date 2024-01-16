@@ -14,7 +14,7 @@ namespace Common
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]
-		bool OtvoriRacun();
+		bool OtvoriRacun(string korisnik);
 
 		[OperationContract]
 		[FaultContract(typeof(SecurityException))]

@@ -17,8 +17,8 @@ namespace Service
             Racun r2 = new Racun(11112, 1000, -500, 0, DateTime.Now);
             Racun r3 = new Racun(11113, -200, -500, 1, DateTime.Now);
 
-            racuni.Add("Korisnik1", r1);
-            racuni.Add("Sluzbenik1", r2);
+            racuni.Add("Sluzbenik1", r1);
+            racuni.Add("Sluzbenik2", r2);
             racuni.Add("Korisnik2", r3);
         }
     }

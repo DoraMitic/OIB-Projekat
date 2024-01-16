@@ -15,7 +15,6 @@ namespace Manager
         public CustomAuthorizationPolicy()
         {
             Id = Guid.NewGuid().ToString();
-            Console.WriteLine(Id);
         }
 
         public ClaimSet Issuer

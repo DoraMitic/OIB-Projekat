@@ -34,8 +34,6 @@ namespace Manager
 
 		public static void AuthenticationSuccess(string userName)
 		{
-			//TO DO
-
 			if (customLog != null)
 			{
 				string UserAuthenticationSuccess =
@@ -53,7 +51,6 @@ namespace Manager
 
 		public static void AuthorizationSuccess(string userName, string serviceName)
 		{
-			//TO DO
 			if (customLog != null)
 			{
 				string AuthorizationSuccess =
@@ -94,8 +91,6 @@ namespace Manager
 
 		public static void AuthenticationFailed(string userName, string reason)
 		{
-			//TO DO
-
 			if (customLog != null)
 			{
 				string UserAuthenticationFailed =
@@ -113,7 +108,6 @@ namespace Manager
 
 		public static void TransactionSuccess(string userName, string serviceName)
 		{
-			//TO DO
 			if (customLog != null)
 			{
 				string TransactionSuccess =
